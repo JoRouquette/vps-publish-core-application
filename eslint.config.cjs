@@ -1,19 +1,26 @@
-const baseConfig = require('../../.eslintrc.cjs');
+const baseConfig = require('../../eslint.config.cjs');
+const tsParser = require('@typescript-eslint/parser');
+const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
 module.exports = [
   ...baseConfig,
   {
-    files: ['**/*.json'],
-    rules: {
-      '@nx/dependency-checks': [
-        'error',
-        {
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
-        },
-      ],
-    },
+    files: ['**/*.ts'],
+    ignores: ['dist/**', 'jest.config.*', '**/*.spec.ts'],
     languageOptions: {
-      parser: require('jsonc-eslint-parser'),
+      parser: tsParser,
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: ['./tsconfig.lib.json', './tsconfig.spec.json'],
+        sourceType: 'module',
+      },
     },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
+    rules: {},
   },
 ];
