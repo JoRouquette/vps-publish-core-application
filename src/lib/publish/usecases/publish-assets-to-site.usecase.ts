@@ -1,13 +1,13 @@
-import type { AssetRef } from '@core-domain/publish/AssetRef';
+import type { AssetRef } from '@core-domain/entities/AssetRef';
 import {
   extractNotesWithAssets,
   type NoteWithAssets,
-} from '@core-domain/publish/NoteWithAssets';
-import type { ResolvedAssetFile } from '@core-domain/publish/ResolvedAssetFile';
-import type { UploaderPort } from '@core-domain/publish/uploader-port';
-import type { AssetsVaultPort } from '@core-domain/publish/ports/assets-vault-port';
-import type { LoggerPort } from '@core-domain/publish/ports/logger-port';
-import type { ProgressPort } from '@core-domain/publish/ports/progress-port';
+} from '@core-domain/entities/NoteWithAssets';
+import type { ResolvedAssetFile } from '@core-domain/entities/ResolvedAssetFile';
+import type { UploaderPort } from '@core-domain/ports/uploader-port';
+import type { AssetsVaultPort } from '@core-domain/ports/assets-vault-port';
+import type { LoggerPort } from '@core-domain/ports/logger-port';
+import type { ProgressPort } from '@core-domain/ports/progress-port';
 
 export type AssetPublishFailureReason =
   | 'not-found'

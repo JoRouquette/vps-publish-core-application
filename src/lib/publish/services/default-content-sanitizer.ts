@@ -1,9 +1,9 @@
-import { PublishableNote } from '@core-domain/publish/PublishableNote';
-import { ContentSanitizer } from '@core-domain/publish/ContentSanitizer';
-import { SanitizationRules } from '@core-domain/publish/SanitizationRules';
+import { PublishableNote } from '@core-domain/entities/PublishableNote';
+import { ContentSanitizerPort } from '@core-domain/ports/content-sanitizer-port';
+import { SanitizationRules } from '@core-domain/entities/SanitizationRules';
 import { SanitizeMarkdownUseCase } from '../usecases/sanitize-markdown.usecase';
 
-export class DefaultContentSanitizer implements ContentSanitizer {
+export class DefaultContentSanitizer implements ContentSanitizerPort {
   private readonly sanitizeMarkdown = new SanitizeMarkdownUseCase();
 
   sanitizeNote(

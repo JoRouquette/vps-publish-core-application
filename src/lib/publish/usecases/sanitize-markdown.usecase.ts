@@ -1,4 +1,4 @@
-import type { SanitizationRules } from '@core-domain/publish/SanitizationRules';
+import type { SanitizationRules } from '@core-domain/entities/SanitizationRules';
 
 export interface SanitizeMarkdownOutput {
   markdown: string;

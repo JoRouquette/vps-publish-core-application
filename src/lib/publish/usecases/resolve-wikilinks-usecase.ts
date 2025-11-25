@@ -1,6 +1,6 @@
-import type { WikilinkRef } from '@core-domain/publish/WikilinkRef';
-import type { ResolvedWikilink } from '@core-domain/publish/ResolvedWikilink';
-import { LoggerPort } from '@core-domain/publish/ports/logger-port';
+import type { WikilinkRef } from '@core-domain/entities/WikilinkRef';
+import type { ResolvedWikilink } from '@core-domain/entities/ResolvedWikilink';
+import { LoggerPort } from '@core-domain/ports/logger-port';
 
 export interface NoteWikilinks {
   noteId: string;

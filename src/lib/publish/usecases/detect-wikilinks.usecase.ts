@@ -1,6 +1,6 @@
-import { PublishableNote } from '@core-domain/publish';
-import type { WikilinkKind, WikilinkRef } from '@core-domain/publish/WikilinkRef';
-import type { LoggerPort } from '@core-domain/publish/ports/logger-port';
+import { PublishableNote } from '@core-domain/entities';
+import type { WikilinkKind, WikilinkRef } from '@core-domain/entities/WikilinkRef';
+import type { LoggerPort } from '@core-domain/ports/logger-port';
 
 /**
  * Regex pour capturer les wikilinks [[...]].

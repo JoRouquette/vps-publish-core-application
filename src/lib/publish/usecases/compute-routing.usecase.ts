@@ -1,6 +1,6 @@
-import type { PublishableNote } from '@core-domain/publish/PublishableNote';
-import type { NoteRoutingInfo } from '@core-domain/publish/NoteRoutingInfo';
-import type { LoggerPort } from '@core-domain/publish/ports/logger-port';
+import type { PublishableNote } from '@core-domain/entities/PublishableNote';
+import type { NoteRoutingInfo } from '@core-domain/entities/NoteRoutingInfo';
+import type { LoggerPort } from '@core-domain/ports/logger-port';
 
 function slugifySegment(segment: string): string {
   return segment

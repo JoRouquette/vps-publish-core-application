@@ -1,14 +1,14 @@
-import type { CollectedNote } from '@core-domain/publish/CollectedNote';
-import type { ContentSanitizer } from '@core-domain/publish/ContentSanitizer';
-import type { FolderConfig } from '@core-domain/publish/FolderConfig';
-import type { PublishableNote } from '@core-domain/publish/PublishableNote';
-import type { PublishPluginSettings } from '@core-domain/publish/PublishPluginSettings';
+import type { CollectedNote } from '@core-domain/entities/CollectedNote';
+import type { ContentSanitizerPort } from '@core-domain/ports/content-sanitizer-port';
+import type { FolderConfig } from '@core-domain/entities/FolderConfig';
+import type { PublishableNote } from '@core-domain/entities/PublishableNote';
+import type { PublishPluginSettings } from '@core-domain/entities/PublishPluginSettings';
 import { DefaultContentSanitizer } from '../services/default-content-sanitizer';
-import type { UploaderPort } from '@core-domain/publish/uploader-port';
-import type { GuidGeneratorPort } from '@core-domain/publish/ports/guid-generator-port';
-import { LogLevel, type LoggerPort } from '@core-domain/publish/ports/logger-port';
-import type { ProgressPort } from '@core-domain/publish/ports/progress-port';
-import type { VaultPort } from '@core-domain/publish/ports/vault-port';
+import type { UploaderPort } from '@core-domain/ports/uploader-port';
+import type { GuidGeneratorPort } from '@core-domain/ports/guid-generator-port';
+import { LogLevel, type LoggerPort } from '@core-domain/ports/logger-port';
+import type { ProgressPort } from '@core-domain/ports/progress-port';
+import type { VaultPort } from '@core-domain/ports/vault-port';
 import { ComputeRoutingUseCase } from './compute-routing.usecase';
 import { DetectAssetsUseCase } from './detect-assets.usecase';
 import { DetectWikilinksUseCase } from './detect-wikilinks.usecase';
@@ -57,12 +57,9 @@ export class PublishToSiteUseCase {
     private readonly uploaderPort: UploaderPort,
     private readonly guidGenerator: GuidGeneratorPort,
     private readonly logger: LoggerPort,
-    private readonly contentSanitizer: ContentSanitizer = new DefaultContentSanitizer()
+    private readonly contentSanitizer: ContentSanitizerPort = new DefaultContentSanitizer()
   ) {
-    this.logger = logger.child(
-      { usecase: 'PublishToSiteUseCase' },
-      LogLevel.debug
-    );
+    this.logger = logger.child({ usecase: 'PublishToSiteUseCase' }, LogLevel.debug);
     this.logger.debug('PublishToSiteUseCase initialized');
 
     this.normalizeFrontmatter = new NormalizeFrontmatterUseCase(logger);
@@ -156,9 +153,7 @@ export class PublishToSiteUseCase {
       );
 
       // normalize frontmatter
-      const domainFrontmatter = this.normalizeFrontmatter.execute(
-        raw.frontmatter
-      );
+      const domainFrontmatter = this.normalizeFrontmatter.execute(raw.frontmatter);
 
       notePipelineLogger.debug('Normalized frontmatter', {
         vaultPath: raw.vaultPath,
@@ -193,6 +188,14 @@ export class PublishToSiteUseCase {
         frontmatter: domainFrontmatter,
         folderConfig: raw.folder,
         vpsConfig: raw.vpsConfig,
+        publishedAt: new Date(),
+        routing: {
+          id: '',
+          slug: '',
+          path: '',
+          routeBase: '',
+          fullPath: '',
+        },
       };
 
       // dataview inline

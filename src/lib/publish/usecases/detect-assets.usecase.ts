@@ -1,9 +1,9 @@
-import { PublishableNote } from '@core-domain/publish';
-import { AssetAlignment } from '@core-domain/publish/AssetAlignment';
-import { AssetDisplayOptions } from '@core-domain/publish/AssetDisplayOptions';
-import { AssetKind } from '@core-domain/publish/AssetKind';
-import { AssetRef } from '@core-domain/publish/AssetRef';
-import type { LoggerPort } from '@core-domain/publish/ports/logger-port';
+import { PublishableNote } from '@core-domain/entities';
+import { AssetAlignment } from '@core-domain/entities/AssetAlignment';
+import { AssetDisplayOptions } from '@core-domain/entities/AssetDisplayOptions';
+import { AssetKind } from '@core-domain/entities/AssetKind';
+import { AssetRef } from '@core-domain/entities/AssetRef';
+import type { LoggerPort } from '@core-domain/ports/logger-port';
 
 /**
  * Regex pour capturer les embeds Obsidian : ![[...]]

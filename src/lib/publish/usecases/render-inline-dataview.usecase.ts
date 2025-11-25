@@ -1,7 +1,7 @@
-import type { DomainFrontmatter } from '@core-domain/publish/DomainFrontmatter';
-import type { InlineDataviewExpression } from '@core-domain/publish/InlineDataviewExpression';
-import type { PublishableNote } from '@core-domain/publish/PublishableNote';
-import type { LoggerPort } from '@core-domain/publish/ports/logger-port';
+import type { DomainFrontmatter } from '@core-domain/entities/DomainFrontmatter';
+import type { InlineDataviewExpression } from '@core-domain/entities/InlineDataviewExpression';
+import type { PublishableNote } from '@core-domain/entities/PublishableNote';
+import type { LoggerPort } from '@core-domain/ports/logger-port';
 
 const INLINE_CODE_REGEX = /`([^`]*?)`/g;
 

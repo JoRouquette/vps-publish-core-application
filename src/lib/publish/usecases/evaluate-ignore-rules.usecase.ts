@@ -1,9 +1,9 @@
-import type { DomainFrontmatter } from '@core-domain/publish/DomainFrontmatter';
-import { IgnorePrimitive } from '@core-domain/publish/IgnorePrimitive';
-import type { IgnoreRule } from '@core-domain/publish/IgnoreRule';
-import type { NoteEligibility } from '@core-domain/publish/NoteEligibility';
-import type { LoggerPort } from '@core-domain/publish/ports/logger-port';
-import { normalizePropertyKey } from '@core-domain/publish/utils/string.utils';
+import type { DomainFrontmatter } from '@core-domain/entities/DomainFrontmatter';
+import { IgnorePrimitive } from '@core-domain/entities/IgnorePrimitive';
+import type { IgnoreRule } from '@core-domain/entities/IgnoreRule';
+import type { NoteEligibility } from '@core-domain/entities/NoteEligibility';
+import type { LoggerPort } from '@core-domain/ports/logger-port';
+import { normalizePropertyKey } from '@core-domain/utils/string.utils';
 
 export interface EvaluateIgnoreRulesInput {
   frontmatter: DomainFrontmatter;

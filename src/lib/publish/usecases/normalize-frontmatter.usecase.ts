@@ -1,6 +1,6 @@
-import type { DomainFrontmatter } from '@core-domain/publish/DomainFrontmatter';
-import { LoggerPort } from '@core-domain/publish/ports/logger-port';
-import { normalizePropertyKey } from '@core-domain/publish/utils/string.utils';
+import type { DomainFrontmatter } from '@core-domain/entities/DomainFrontmatter';
+import { LoggerPort } from '@core-domain/ports/logger-port';
+import { normalizePropertyKey } from '@core-domain/utils/string.utils';
 
 export class NormalizeFrontmatterUseCase {
   private readonly _logger: LoggerPort;
@@ -16,7 +16,7 @@ export class NormalizeFrontmatterUseCase {
       this._logger.error(
         'No frontmatter input provided, returning empty result'
       );
-      return { flat: {}, nested: {} };
+      return { flat: {}, nested: {}, tags: [] };
     }
 
     const flat: Record<string, unknown> = {};
@@ -46,8 +46,16 @@ export class NormalizeFrontmatterUseCase {
       }
     }
 
-    this._logger.debug('Frontmatter normalization result', { flat, nested });
-    return { flat, nested };
+    const tagsRaw = input['tags'];
+    const tags =
+      Array.isArray(tagsRaw) && tagsRaw.every((t) => typeof t === 'string')
+        ? (tagsRaw as string[])
+        : typeof tagsRaw === 'string'
+          ? [tagsRaw]
+          : [];
+
+    this._logger.debug('Frontmatter normalization result', { flat, nested, tags });
+    return { flat, nested, tags };
   }
 
   private setNestedValue(
