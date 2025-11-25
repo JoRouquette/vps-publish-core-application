@@ -1,5 +1,5 @@
 import { HttpResponse, HttpStatus } from '@core-domain/entities/HttpResponse';
-import { Mapper, Handler } from '@core-domain/utils/Mapper';
+import { Mapper, Handler } from '@core-domain/utils/mapper.util';
 import type { LoggerPort } from '@core-domain/ports/logger-port';
 
 export type HandleHttpResponseUseCaseCommand<T> = {
