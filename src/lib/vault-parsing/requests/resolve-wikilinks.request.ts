@@ -35,9 +35,7 @@ function normalizeKey(key: string): string {
   return key.trim().replace(/\\/g, '/').replace(/^\/+/, '').toLowerCase();
 }
 
-export class ResolveWikilinksQuery
-  implements QueryHandler<{ notes: NoteWikilinks[]; targets: WikilinkTargetDescriptor[] }, ResolveWikilinksOutput[]>
-{
+export class ResolveWikilinksService {
   private readonly _logger: LoggerPort;
 
   constructor(logger: LoggerPort) {

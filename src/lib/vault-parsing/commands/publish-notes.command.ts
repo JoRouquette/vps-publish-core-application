@@ -10,13 +10,13 @@ import type { UploaderPort } from '@core-domain/ports/uploader-port';
 import type { VaultPort } from '@core-domain/ports/vault-port';
 
 import { CommandHandler } from '../../common/command-handler';
-import { DefaultContentSanitizer } from '../services/default-content-sanitizer';
-import { ComputeRoutingQuery } from '../queries/compute-routing.query';
-import { DetectAssetsQuery } from '../queries/detect-assets.query';
-import { DetectWikilinksQuery } from '../queries/detect-wikilinks.query';
-import { EvaluateIgnoreRulesQuery } from '../queries/evaluate-ignore-rules.query';
-import { NormalizeFrontmatterQuery } from '../queries/normalize-frontmatter.query';
-import { RenderInlineDataviewQuery } from '../queries/render-inline-dataview.query';
+import { ContentSanitizerService } from '../services/content-sanitizer.service';
+import { ComputeRoutingQuery } from '../requests/compute-routing.request';
+import { DetectAssetsQuery } from '../requests/detect-assets.request';
+import { DetectWikilinksQuery } from '../requests/detect-wikilinks.request';
+import { EvaluateIgnoreRulesQuery } from '../requests/evaluate-ignore-rules.request';
+import { NormalizeFrontmatterQuery } from '../requests/normalize-frontmatter.request';
+import { RenderInlineDataviewQuery } from '../requests/render-inline-dataview.request';
 
 export type PublicationResult =
   | { type: 'success'; publishedCount: number; notes: PublishableNote[] }
@@ -47,7 +47,7 @@ export class PublishNotesCommandHandler
     private readonly uploaderPort: UploaderPort,
     private readonly guidGenerator: GuidGeneratorPort,
     private readonly logger: LoggerPort,
-    private readonly contentSanitizer: ContentSanitizerPort = new DefaultContentSanitizer()
+    private readonly contentSanitizer: ContentSanitizerPort = new ContentSanitizerService()
   ) {
     this.logger = logger.child({ usecase: 'PublishToSiteUseCase' }, LogLevel.debug);
     this.logger.debug('PublishToSiteUseCase initialized');
@@ -178,7 +178,7 @@ export class PublishNotesCommandHandler
       };
 
       note = this.renderInlineDataview.execute(note);
-      note = this.contentSanitizer.sanitizeNote(note, raw.folder.sanitization);
+      note = this.contentSanitizer.sanitize(note, raw.folder.sanitization);
       note = this.detectAssets.execute(note);
       note = this.detectWikilinks.execute(note);
       note = this.computeRouting.execute(note);

@@ -1,4 +1,4 @@
-import { HttpRequestQuery, HttpRequestResponse } from '../queries/http-request.query';
+import { HttpRequestQuery, HttpRequestResponse } from '../requests/http-request.request';
 
 export class HttpRequestHandler {
   handleRequest<T>(request: HttpRequestQuery<T>): HttpRequestResponse {
