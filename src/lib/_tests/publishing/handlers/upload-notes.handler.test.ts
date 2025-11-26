@@ -1,4 +1,4 @@
-import { UploadNotesHandler } from '../../../publishing/handlers/UploadNotesHandler';
+import { UploadNotesHandler } from '../../../publishing/handlers/upload-notes.handler';
 import { UploadNotesCommand } from '../../../publishing/commands/upload-notes.command';
 import { PublishableNote } from '@core-domain';
 
@@ -32,7 +32,6 @@ describe('UploadNotesHandler', () => {
       content: 'Hello world',
       publishedAt: new Date('2023-01-01T00:00:00Z'),
       routing: {
-        id: 'note-1',
         fullPath: '/notes/test-note',
         path: '/notes/test-note',
         slug: 'test-note',
@@ -47,6 +46,7 @@ describe('UploadNotesHandler', () => {
         vaultFolder: 'notes',
         routeBase: '/notes',
         vpsId: 'vps-1',
+        sanitization: [],
       },
       vpsConfig: {
         id: 'vps-1',
@@ -54,6 +54,7 @@ describe('UploadNotesHandler', () => {
         url: 'https://example.test',
         apiKey: 'dummy',
       },
+      eligibility: { isPublishable: true },
       ...overrides,
     };
   }

@@ -11,7 +11,6 @@ describe('UploadNotesCommand', () => {
     content: 'This is a test note.',
     publishedAt: new Date(),
     routing: {
-      id: 'note-1',
       fullPath: '/notes/sample-note',
       path: '/notes/sample-note',
       slug: 'sample-note',
@@ -22,6 +21,7 @@ describe('UploadNotesCommand', () => {
     frontmatter: { tags: ['tag1'], flat: {}, nested: {} },
     folderConfig: { id: 'folder-1', vaultFolder: 'notes', routeBase: '/notes', vpsId: 'vps-1' },
     vpsConfig: { id: 'vps-1', name: 'Default VPS', url: 'https://example.test', apiKey: 'dummy' },
+    eligibility: { isPublishable: true },
   };
 
   it('should create a valid UploadNotesCommand object', () => {

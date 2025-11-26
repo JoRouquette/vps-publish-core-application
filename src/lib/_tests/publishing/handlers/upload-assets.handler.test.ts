@@ -1,4 +1,4 @@
-import { UploadAssetsHandler } from '../../../publishing/handlers/UploadAssetsHandler';
+import { UploadAssetsHandler } from '../../../publishing/handlers/upload-assets.handler';
 import { AssetStoragePort } from '../../../publishing/ports/assets-storage.port';
 import { LoggerPort } from '../../../ports/logger.port';
 import { UploadAssetsCommand } from '../../../publishing/commands/upload-assets.command';
