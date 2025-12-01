@@ -42,7 +42,7 @@ export class UploadNotesHandler implements CommandHandler<UploadNotesCommand, Up
       const noteLogger = logger?.child({ noteId: note.noteId, slug: note.routing?.slug });
       try {
         noteLogger?.debug('Rendering markdown');
-        const bodyHtml = await this.markdownRenderer.render(note.content);
+        const bodyHtml = await this.markdownRenderer.render(note);
         noteLogger?.debug('Building HTML page');
         const fullHtml = this.buildHtmlPage(note, bodyHtml);
 
