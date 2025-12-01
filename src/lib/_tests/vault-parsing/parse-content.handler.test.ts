@@ -120,4 +120,24 @@ describe('ParseContentHandler', () => {
     const result = await handler.handle([note]);
     expect(result.length).toBe(0);
   });
+
+  it('drops notes when frontmatter is already wrapped as DomainFrontmatter', async () => {
+    const handler = buildHandler([{ property: 'publish', ignoreIf: false } as any]);
+    const note: CollectedNote = {
+      noteId: 'a',
+      title: 'Note A',
+      vaultPath: 'Vault/Blog/NoteA.md',
+      relativePath: 'NoteA.md',
+      content: 'hello',
+      frontmatter: {
+        flat: { publish: false, tags: ['keep'] },
+        nested: {},
+        tags: ['stale'],
+      } as any,
+      folderConfig: baseFolder,
+    };
+
+    const result = await handler.handle([note]);
+    expect(result.length).toBe(0);
+  });
 });
