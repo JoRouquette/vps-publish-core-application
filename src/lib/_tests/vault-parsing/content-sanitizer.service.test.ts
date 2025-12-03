@@ -42,7 +42,6 @@ Body with ![[img.png]]`,
       tags: ['public', 'private'],
     },
     folderConfig: { id: 'f', vaultFolder: 'Vault', routeBase: '/blog', vpsId: 'vps' },
-    vpsConfig: { id: 'vps', name: 'v', url: 'http://x', apiKey: 'k' },
     routing: { slug: '', path: '', routeBase: '', fullPath: '' },
     publishedAt: new Date(),
     eligibility: { isPublishable: true },
@@ -59,9 +58,10 @@ Body with ![[img.png]]`,
     expect((sanitized.frontmatter.nested as any).secret).toBeUndefined();
     expect(sanitized.frontmatter.tags).toEqual(['public']);
 
-    expect(sanitized.content).toContain('publish: true');
+    expect(sanitized.content).not.toContain('publish: true');
     expect(sanitized.content).not.toContain('secret: keep');
     expect(sanitized.content).not.toContain('private');
-    expect(sanitized.content.startsWith('---')).toBe(true);
+    expect(sanitized.content.startsWith('---')).toBe(false);
+    expect(sanitized.content.trim().startsWith('Body with')).toBe(true);
   });
 });

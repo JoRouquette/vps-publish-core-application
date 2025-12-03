@@ -1,4 +1,4 @@
-import { Manifest, ManifestPage, PublishableNote, Slug } from '@core-domain';
+import { AssetRef, Manifest, ManifestPage, PublishableNote, ResolvedWikilink, Slug } from '@core-domain';
 import { CommandHandler } from '../../common/command-handler';
 import { LoggerPort } from '../../ports/logger.port';
 import type { MarkdownRendererPort } from '../../ports/markdown-renderer.port';
@@ -103,7 +103,7 @@ export class UploadNotesHandler implements CommandHandler<UploadNotesCommand, Up
 
     let manifest: Manifest;
 
-    // Si pas de manifest ou manifest lié à une autre session → on repars de zéro
+    // If manifest is missing or belongs to another session, start fresh
     if (!existing || existing.sessionId !== sessionId) {
       logger?.info('Starting new manifest for session', { sessionId });
       manifest = {
@@ -119,7 +119,7 @@ export class UploadNotesHandler implements CommandHandler<UploadNotesCommand, Up
       };
     }
 
-    // Merge : dernière version d'une note gagne
+    // Merge: most recent version of a note wins
     const byId = new Map<string, ManifestPage>();
     for (const p of manifest.pages) {
       byId.set(p.id, p);
@@ -153,50 +153,54 @@ export class UploadNotesHandler implements CommandHandler<UploadNotesCommand, Up
     const fm = note.frontmatter?.nested ?? {};
     const tags = Array.isArray(note.frontmatter?.tags) ? note.frontmatter.tags : [];
 
-    const entries: Array<{ key: string; value: unknown }> = [];
+    const entries: Array<{ key: string; value: unknown; path: string }> = [];
     for (const [k, v] of Object.entries(fm)) {
-      entries.push({ key: k, value: v });
+      entries.push({ key: k, value: v, path: k });
     }
     if (tags.length > 0 && !('tags' in fm)) {
-      entries.push({ key: 'tags', value: tags });
+      entries.push({ key: 'tags', value: tags, path: 'tags' });
     }
 
     if (entries.length === 0) return '';
 
-    const renderValue = (value: unknown, depth: number): string => {
-      if (value === null || value === undefined) return '<span class="fm-value is-empty">—</span>';
+    const renderValue = (value: unknown, depth: number, path: string): string => {
+      if (value === null || value === undefined) return '<span class="fm-value is-empty">""</span>';
       if (typeof value === 'boolean') {
         const checked = value ? 'checked' : '';
         return `<label class="fm-boolean"><input type="checkbox" disabled ${checked}>${value ? 'Oui' : 'Non'}</label>`;
       }
       if (Array.isArray(value)) {
-        const csv = value
-          .map((v) => (typeof v === 'string' ? v : String(v ?? '')))
-          .filter((v) => v.length > 0)
-          .join(', ');
-        return `<span class="fm-value">${csv}</span>`;
+        if (value.length === 0) return '<span class="fm-value is-empty">""</span>';
+        const rendered = value
+          .map((v, idx) => renderValue(v, depth + 1, `${path}[${idx}]`))
+          .join('<span class="fm-array-sep">, </span>');
+        return `<div class="fm-array">${rendered}</div>`;
       }
       if (typeof value === 'object') {
         const rows = Object.entries(value as Record<string, unknown>)
-          .map(([ck, cv]) => renderEntry(ck, cv, depth + 1))
+          .map(([ck, cv]) => renderEntry(ck, cv, depth + 1, path ? `${path}.${ck}` : ck))
           .join('');
         return `<div class="fm-group depth-${depth}">${rows}</div>`;
       }
-      return `<span class="fm-value">${String(value)}</span>`;
+      const renderedText =
+        typeof value === 'string'
+          ? this.renderFrontmatterText(value, note, path)
+          : this.escapeHtml(String(value));
+      return `<span class="fm-value">${renderedText}</span>`;
     };
 
-    const renderEntry = (key: string, value: unknown, depth: number): string => {
+    const renderEntry = (key: string, value: unknown, depth: number, path: string): string => {
       return `
       <div class="fm-row depth-${depth}">
-        <span class="fm-label">${key}</span>
+        <span class="fm-label">${this.escapeHtml(key)}</span>
         <span class="fm-sep">:</span>
-        ${renderValue(value, depth)}
+        ${renderValue(value, depth, path)}
       </div>`;
     };
 
     const rows = entries
       .sort((a, b) => a.key.localeCompare(b.key, 'fr', { sensitivity: 'base' }))
-      .map((e) => renderEntry(e.key, e.value, 0))
+      .map((e) => renderEntry(e.key, e.value, 0, e.path))
       .join('');
     return `<section class="frontmatter-card">
       <div class="fm-title">Frontmatter</div>
@@ -218,5 +222,102 @@ export class UploadNotesHandler implements CommandHandler<UploadNotesCommand, Up
       return (this.manifestStorage as ManifestStorageFactory)(sessionId);
     }
     return this.manifestStorage;
+  }
+
+  private renderFrontmatterText(text: string, note: PublishableNote, path: string): string {
+    const tokensRegex = /(!?\[\[[^\]]+\]\])/g;
+    const assets = (note.assets ?? []).filter(
+      (a) => (a.origin === 'frontmatter' || !a.origin) && (!a.frontmatterPath || a.frontmatterPath === path)
+    );
+    const wikilinks = (note.resolvedWikilinks ?? []).filter(
+      (l) =>
+        (l.origin === 'frontmatter' || !l.origin) && (!l.frontmatterPath || l.frontmatterPath === path)
+    );
+
+    let lastIndex = 0;
+    const parts: string[] = [];
+    let match: RegExpExecArray | null;
+
+    while ((match = tokensRegex.exec(text)) !== null) {
+      const idx = match.index ?? 0;
+      if (idx > lastIndex) {
+        parts.push(this.escapeHtml(text.slice(lastIndex, idx)));
+      }
+
+      const raw = match[0];
+      if (raw.startsWith('!')) {
+        parts.push(this.renderFrontmatterAssetLink(raw, assets));
+      } else {
+        parts.push(this.renderFrontmatterWikilink(raw, wikilinks));
+      }
+
+      lastIndex = idx + raw.length;
+    }
+
+    if (lastIndex < text.length) {
+      parts.push(this.escapeHtml(text.slice(lastIndex)));
+    }
+
+    return parts.join('');
+  }
+
+  private renderFrontmatterAssetLink(raw: string, assets: AssetRef[]): string {
+    const asset = assets.find((a) => a.raw === raw);
+    const target = asset?.target ?? this.extractEmbedTarget(raw);
+
+    if (!target) {
+      return this.escapeHtml(raw);
+    }
+
+    const href = this.buildAssetUrl(target);
+    const label = this.escapeHtml(target);
+
+    return `<a class="fm-link fm-asset-link" href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  }
+
+  private renderFrontmatterWikilink(raw: string, wikilinks: ResolvedWikilink[]): string {
+    const link = wikilinks.find((l) => l.raw === raw);
+    if (!link) {
+      return this.escapeHtml(raw);
+    }
+
+    const label = this.escapeHtml(
+      link.alias ?? (link.subpath ? `${link.target}#${link.subpath}` : link.target)
+    );
+
+    if (link.isResolved) {
+      const hrefTarget = link.href ?? link.path ?? link.target;
+      const href = this.escapeAttribute(encodeURI(hrefTarget));
+      return `<a class="fm-link fm-wikilink" href="${href}">${label}</a>`;
+    }
+
+    return `<span class="fm-value fm-wikilink-unresolved">${label}</span>`;
+  }
+
+  private extractEmbedTarget(raw: string): string | null {
+    const match = raw.match(/!\[\[([^\]]+)\]\]/);
+    if (!match) return null;
+    const inner = match[1].trim();
+    if (!inner) return null;
+    const [first] = inner.split('|').map((s) => s.trim()).filter(Boolean);
+    return first || null;
+  }
+
+  private buildAssetUrl(target: string): string {
+    const normalized = target.replace(/^\/+/, '').replace(/^assets\//, '');
+    return `/assets/${encodeURI(normalized)}`;
+  }
+
+  private escapeHtml(input: string): string {
+    return input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private escapeAttribute(input: string): string {
+    return this.escapeHtml(input).replace(/`/g, '&#96;');
   }
 }

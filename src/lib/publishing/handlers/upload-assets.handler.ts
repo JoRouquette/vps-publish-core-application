@@ -25,7 +25,9 @@ export class UploadAssetsHandler
     const errors: { assetName: string; message: string }[] = [];
     let published = 0;
 
-    for (const asset of command.assets) {
+    const assets = Array.isArray(command.assets) ? command.assets : [];
+
+    for (const asset of assets) {
       try {
         const filename = asset.relativePath || asset.fileName;
         const content = this.decodeBase64(asset.contentBase64);
