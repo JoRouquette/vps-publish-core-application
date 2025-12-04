@@ -32,7 +32,11 @@ class NoopLogger implements LoggerPort {
 describe('ParseContentHandler', () => {
   const logger = new NoopLogger();
 
-  function buildHandler(ignoreRules: IgnoreRule[] = [], keysToExclude: string[] = [], tagsToExclude: string[] = []) {
+  function buildHandler(
+    ignoreRules: IgnoreRule[] = [],
+    keysToExclude: string[] = [],
+    tagsToExclude: string[] = []
+  ) {
     const normalizeFrontmatterService = new NormalizeFrontmatterService(logger);
     const evaluateIgnoreRulesHandler = new EvaluateIgnoreRulesHandler(ignoreRules, logger);
     const noteMapper = new NotesMapper();
@@ -64,7 +68,11 @@ describe('ParseContentHandler', () => {
   };
 
   it('filters notes using ignore rules and resolves wikilinks/assets/routing', async () => {
-    const handler = buildHandler([{ property: 'publish', ignoreIf: false } as any], ['secret'], ['private']);
+    const handler = buildHandler(
+      [{ property: 'publish', ignoreIf: false } as any],
+      ['secret'],
+      ['private']
+    );
 
     const noteA: CollectedNote = {
       noteId: 'a',
@@ -99,9 +107,9 @@ describe('ParseContentHandler', () => {
 
     const parsedA = result.find((n) => n.noteId === 'a')!;
     expect(parsedA.assets?.length).toBe(2);
-    expect(parsedA.assets?.some((a) => a.origin === 'frontmatter' && a.target === 'cover.png')).toBe(
-      true
-    );
+    expect(
+      parsedA.assets?.some((a) => a.origin === 'frontmatter' && a.target === 'cover.png')
+    ).toBe(true);
     expect(parsedA.content).toContain('Hello');
     expect(parsedA.content).toContain('Note A'); // inline dataview replaced
     expect(parsedA.frontmatter.flat.secret).toBeUndefined();

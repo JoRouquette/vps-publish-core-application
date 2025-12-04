@@ -34,13 +34,9 @@
       }
     },
     "format": {
-      "executor": "@nx/js:prettier",
+      "executor": "nx:run-commands",
       "options": {
-        "lintFilePatterns": [
-          "libs/core-application/**/*.ts",
-          "libs/core-application/**/*.json",
-          "libs/core-application/**/*.md"
-        ]
+        "command": "npx prettier --check \"libs/core-application/**/*.{ts,json,md}\""
       }
     }
   }

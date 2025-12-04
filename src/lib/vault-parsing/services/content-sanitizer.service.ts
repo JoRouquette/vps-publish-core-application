@@ -106,16 +106,13 @@ export class ContentSanitizerService implements BaseService {
     });
   }
 
-  private compileRules(
-    rules: SanitizationRules[]
-  ): Array<SanitizationRules & { regex: RegExp }> {
+  private compileRules(rules: SanitizationRules[]): Array<SanitizationRules & { regex: RegExp }> {
     const compiled: Array<SanitizationRules & { regex: RegExp }> = [];
 
     for (const rule of rules || []) {
       if (rule.isEnabled === false) continue;
       try {
-        const regex =
-          rule.regex instanceof RegExp ? rule.regex : new RegExp(rule.regex, 'g');
+        const regex = rule.regex instanceof RegExp ? rule.regex : new RegExp(rule.regex, 'g');
         compiled.push({ ...rule, regex });
       } catch (error) {
         this.logger?.warn('Failed to compile sanitization rule', {

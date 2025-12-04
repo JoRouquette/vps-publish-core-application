@@ -47,7 +47,12 @@ describe('EvaluateIgnoreRulesHandler', () => {
   it('keeps note publishable when rule does not match', async () => {
     const rules: IgnoreRule[] = [{ property: 'publish', ignoreIf: false } as any];
     const handler = new EvaluateIgnoreRulesHandler(rules, logger);
-    const [result] = await handler.handle([{ ...baseNote, frontmatter: { flat: {}, nested: { publish: true }, tags: [] } } as PublishableNote]);
+    const [result] = await handler.handle([
+      {
+        ...baseNote,
+        frontmatter: { flat: {}, nested: { publish: true }, tags: [] },
+      } as PublishableNote,
+    ]);
     expect(result.eligibility.isPublishable).toBe(true);
   });
 });

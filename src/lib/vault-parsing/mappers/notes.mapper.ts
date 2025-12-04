@@ -5,15 +5,7 @@ import { PublishableNote } from '@core-domain/entities/publishable-note';
 export class NotesMapper implements Mapper<CollectedNote, PublishableNote> {
   map(note: CollectedNote): PublishableNote {
     // Map all NoteCore fields directly
-    const {
-      noteId,
-      title,
-      vaultPath,
-      relativePath,
-      content,
-      frontmatter,
-      folderConfig,
-    } = note;
+    const { noteId, title, vaultPath, relativePath, content, frontmatter, folderConfig } = note;
 
     // Provide default routing info (must be replaced with actual logic as needed)
     const routing: NoteRoutingInfo = {

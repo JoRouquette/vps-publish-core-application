@@ -74,9 +74,7 @@ export class BuildTreeHandler implements QueryHandler<Manifest, TreeNode> {
 
   private ensureFolderChild(parent: TreeNode, segment: string): TreeNode {
     parent.children = parent.children ?? [];
-    let next = parent.children.find(
-      (child) => child.kind === 'folder' && child.name === segment
-    );
+    let next = parent.children.find((child) => child.kind === 'folder' && child.name === segment);
 
     if (!next) {
       const path = parent.path ? parent.path + '/' + segment : segment;

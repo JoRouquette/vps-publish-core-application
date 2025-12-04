@@ -114,9 +114,7 @@ function getNestedValue(nested: Record<string, unknown>, propertyPath: string): 
       return undefined;
     }
 
-    const matchKey = Object.keys(current).find(
-      (k) => normalizePropertyKey(k) === segment
-    );
+    const matchKey = Object.keys(current).find((k) => normalizePropertyKey(k) === segment);
     if (!matchKey) {
       return undefined;
     }
@@ -128,12 +126,16 @@ function getNestedValue(nested: Record<string, unknown>, propertyPath: string): 
 }
 
 function isEqualPrimitive(value: unknown, target: IgnorePrimitive): boolean {
-    if (typeof value === 'string' && typeof target === 'string') {
-      const normalize = (s: string) =>
-        s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-      return normalize(value) === normalize(target);
-    }
-    return value === target;
+  if (typeof value === 'string' && typeof target === 'string') {
+    const normalize = (s: string) =>
+      s
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    return normalize(value) === normalize(target);
+  }
+  return value === target;
 }
 
 function matchesAnyPrimitive(

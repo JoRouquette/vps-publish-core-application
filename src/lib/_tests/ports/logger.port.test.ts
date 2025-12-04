@@ -23,9 +23,7 @@ describe('LoggerPort', () => {
 
   it('should log debug messages', () => {
     logger.debug('debug message', 1, 2);
-    expect(logs).toEqual([
-      { level: 'debug', message: 'debug message', args: [1, 2], context: {} },
-    ]);
+    expect(logs).toEqual([{ level: 'debug', message: 'debug message', args: [1, 2], context: {} }]);
   });
 
   it('should log info messages', () => {
