@@ -20,7 +20,13 @@ describe('UploadNotesCommand', () => {
     vaultPath: 'vault/notes/sample-note.md',
     relativePath: 'notes/sample-note.md',
     frontmatter: { tags: ['tag1'], flat: {}, nested: {} },
-    folderConfig: { id: 'folder-1', vaultFolder: 'notes', routeBase: '/notes', vpsId: 'vps-1' },
+    folderConfig: {
+      id: 'folder-1',
+      vaultFolder: 'notes',
+      routeBase: '/notes',
+      vpsId: 'vps-1',
+      ignoredCleanupRuleIds: [],
+    },
     eligibility: { isPublishable: true },
   };
 

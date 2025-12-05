@@ -66,6 +66,7 @@ describe('ParseContentHandler', () => {
     vaultFolder: 'Vault/Blog',
     routeBase: '/blog',
     vpsId: 'vps',
+    ignoredCleanupRuleIds: [],
   };
 
   it('filters notes using ignore rules and resolves wikilinks/assets/routing', async () => {

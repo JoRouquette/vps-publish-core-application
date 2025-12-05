@@ -35,6 +35,7 @@ describe('NormalizeFrontmatterService', () => {
       vaultFolder: 'Vault',
       routeBase: '/',
       vpsId: 'vps',
+      ignoredCleanupRuleIds: [],
     },
   };
 

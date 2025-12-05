@@ -49,7 +49,7 @@ describe('UploadNotesHandler', () => {
         vaultFolder: 'notes',
         routeBase: '/notes',
         vpsId: 'vps-1',
-        sanitization: [],
+        ignoredCleanupRuleIds: [],
       },
       eligibility: { isPublishable: true },
       ...overrides,
