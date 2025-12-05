@@ -135,9 +135,9 @@ export class ChunkAssemblerService {
 
     // Decompress
     try {
-      const decompressed = this.compression.decompress(compressed);
+      const decompressed = await this.compression.decompress(compressed);
 
-      this.logger?.info('Data decompressed', {
+      this.logger?.debug('Data decompressed', {
         uploadId,
         compressedSize: compressed.length,
         decompressedSize: decompressed.length,
@@ -198,7 +198,7 @@ export class ChunkAssemblerService {
     }
 
     if (cleaned > 0) {
-      this.logger?.info('Cleanup completed', { cleaned, remaining: this.chunkStores.size });
+      this.logger?.debug('Cleanup completed', { cleaned, remaining: this.chunkStores.size });
     }
   }
 
@@ -227,6 +227,6 @@ export class ChunkAssemblerService {
       this.cleanupInterval = undefined;
     }
     this.chunkStores.clear();
-    this.logger?.info('ChunkAssemblerService shutdown complete');
+    this.logger?.debug('ChunkAssemblerService shutdown complete');
   }
 }

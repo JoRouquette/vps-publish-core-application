@@ -51,11 +51,11 @@ export class ChunkedUploadService {
     });
 
     // 2. Compress with gzip
-    const compressed = this.compression.compress(jsonString, this.compressionLevel);
+    const compressed = await this.compression.compress(jsonString, this.compressionLevel);
     const compressedSize = compressed.length;
     const compressionRatio = ((1 - compressedSize / originalSize) * 100).toFixed(2);
 
-    this.logger.info('Data compressed', {
+    this.logger.debug('Data compressed', {
       uploadId,
       originalSize,
       compressedSize,
@@ -94,7 +94,7 @@ export class ChunkedUploadService {
       });
     }
 
-    this.logger.info('Upload prepared', {
+    this.logger.debug('Upload prepared', {
       uploadId,
       totalChunks,
       avgChunkSizeMB: (compressedSize / totalChunks / 1024 / 1024).toFixed(2),
@@ -174,7 +174,7 @@ export class ChunkedUploadService {
     const uploadId = chunks[0]?.metadata.uploadId;
     const totalChunks = chunks.length;
 
-    this.logger.info('Starting chunked upload', { uploadId, totalChunks });
+    this.logger.debug('Starting chunked upload', { uploadId, totalChunks });
 
     for (let i = 0; i < chunks.length; i++) {
       await this.uploadChunk(chunks[i], uploader);
@@ -191,7 +191,7 @@ export class ChunkedUploadService {
       });
     }
 
-    this.logger.info('Chunked upload completed', { uploadId, totalChunks });
+    this.logger.debug('Chunked upload completed', { uploadId, totalChunks });
   }
 
   private delay(ms: number): Promise<void> {
